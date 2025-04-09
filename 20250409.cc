@@ -165,10 +165,7 @@ public:
         return left;
     }
 
-    ListNode *mergeKLists(vector<ListNode *> &lists)
-    {
-        return merge(lists, 0, lists.size() - 1);
-    }
+    
 
     ListNode *merge(vector<ListNode *> lists, int left, int right)
     {
