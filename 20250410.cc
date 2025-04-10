@@ -1,6 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
 class Solution
 {
 public:
@@ -265,5 +274,92 @@ public:
                 right = mid - 1;
         }
         return left;
+    }
+
+    vector<vector<int>> matrixBlockSum(vector<vector<int>> &mat, int k)
+    {
+        int m = mat.size(), n = mat[0].size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+
+        for (int i = 1; i <= m; i++)
+            for (int j = 1; j <= n; j++)
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1] - dp[i - 1][j - 1] + mat[i - 1][j - 1];
+
+        vector<vector<int>> ret(m, vector<int>(n));
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                int x1 = max(0, i - k) + 1, y1 = max(0, j - k) + 1;
+                int x2 = min(m - 1, i + k) + 1, y2 = min(n - 1, j + k) + 1;
+
+                ret[i][j] = dp[x2][y2] - dp[x1 - 1][y2] - dp[x2][y1 - 1] + dp[x1 - 1][y1 - 1];
+            }
+
+        return ret;
+    }
+
+    int waysToStep(int n)
+    {
+        if (n < 3)
+            return n;
+
+        int base = 1000000007;
+        int dp1 = 1, dp2 = 2, dp3 = 4, tmp2, tmp3;
+
+        while (n-- != 2)
+        {
+            tmp2 = dp2, tmp3 = dp3;
+            dp3 = (((dp1 + dp2) % base) + dp3) % base;
+            dp2 = tmp3;
+            dp1 = tmp2;
+        }
+        return dp3;
+    }
+
+    void reorderList(ListNode *head)
+    {
+        if (head == nullptr || head->next == nullptr || head->next->next)
+            return;
+
+        ListNode *slow = head, *fast = head;
+
+        while (fast && fast->next)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        ListNode *head2 = new ListNode(0);
+        ListNode *cur = slow->next;
+        slow->next = nullptr;
+
+        while (cur)
+        {
+            ListNode *next = cur->next;
+            cur->next = head2->next;
+            head2->next = cur;
+            cur = next;
+        }
+
+        ListNode *ret = new ListNode(0);
+        ListNode *prev = ret;
+        ListNode *cur1 = head, *cur2 = head2->next;
+
+        while (cur1)
+        {
+            prev->next = cur1;
+            cur1 = cur1->next;
+            prev = prev->next;
+
+            if (cur2)
+            {
+                prev->next = cur2;
+                cur2 = cur2->next;
+                prev = prev->next;
+            }
+        }
+
+        delete head2, ret;
     }
 };
