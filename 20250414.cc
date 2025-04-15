@@ -451,4 +451,50 @@ public:
 
         return ret;
     }
+
+    string multiply(string num1, string num2)
+    {
+        int m = num1.size(), n = num2.size();
+        reverse(num1.begin(), num1.end());
+        reverse(num2.begin(), num2.end());
+
+        vector<int> tmp(m + n - 1);
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                tmp[i + j] += (num1[i] - '0') * (num2[j] - '0');
+
+        string ret;
+        int t = 0, cur = 0;
+        while (cur < m + n - 1 || t)
+        {
+            if (cur < m + n - 1)
+                t += tmp[cur++];
+            ret += (t % 10 + '0');
+            t /= 10;
+        }
+
+        while (ret.size() > 1 && ret.back() == '0')
+            ret.pop_back();
+
+        reverse(ret.begin(), ret.end());
+        return ret;
+    }
+
+    bool validateStackSequences(vector<int> &pushed, vector<int> &popped)
+    {
+        stack<int> st;
+
+        int i = 0, n = popped.size();
+        for (auto num : pushed)
+        {
+            st.push(num);
+            while (st.size() && st.size() == popped[i])
+            {
+                st.pop();
+                i++;
+            }
+        }
+
+        return i == n;
+    }
 };
