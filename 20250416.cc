@@ -557,6 +557,69 @@ public:
 
         return ret;
     }
+
+    priority_queue<int, vector<int>, greater<int>> heap;
+    int _k;
+
+    void KthLargest(int k, vector<int> &nums)
+    {
+        _k = k;
+        for (auto x : nums)
+        {
+            heap.push(x);
+            if (heap.size() > _k)
+                heap.pop();
+        }
+    }
+
+    int add(int val)
+    {
+        heap.push(val);
+        if (heap.size() > _k)
+            heap.pop();
+        return heap.top();
+    }
+
+    typedef pair<string, int> PSI;
+
+    struct cmp
+    {
+        bool operator()(const PSI &a, const PSI &b)
+        {
+            if (a.second == b.second) // 频次相同，字典序按照大根堆排列
+            {
+                return a.first < b.first;
+            }
+            return a.second > b.second;
+        }
+    };
+
+    vector<string> topKFrequent(vector<string> &words, int k)
+    {
+        // 统计每个单词的频次
+        unordered_map<string, int> hash;
+        for (auto &s : words)
+            hash[s]++;
+
+        // 创建一个大小为K的堆
+        priority_queue<PSI, vector<PSI>, cmp> heap;
+
+        for (auto &psi : hash)
+        {
+            heap.push(psi);
+            if (heap.size() > k)
+                heap.pop();
+        }
+
+        // 提取结果
+        vector<string> ret(k);
+        for (int i = k - 1; i >= 0; i--)
+        {
+            ret[i] = heap.top().first;
+            heap.pop();
+        }
+        return ret;
+    }
 };
 
 int main()
