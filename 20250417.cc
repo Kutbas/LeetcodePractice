@@ -366,10 +366,6 @@ public:
     priority_queue<int> left;
     priority_queue<int, vector<int>, greater<int>> right;
 
-    MedianFinder()
-    {
-    }
-
     void addNum(int num)
     {
         if (left.size() == right.size())
@@ -404,5 +400,39 @@ public:
             return (left.top() + right.top()) / 2.0;
         else
             return left.top();
+    }
+
+    typedef pair<int, int> PII;
+    int dx[4] = {0, 0, 1, -1};
+    int dy[4] = {1, -1, 0, 0};
+
+    vector<vector<int>> floodFill(vector<vector<int>> &image, int sr, int sc, int color)
+    {
+        int prev = image[sr][sc]; // 先标记一下需要修改的像素值
+        if (prev == color)
+            return image; // 处理边界情况
+
+        int m = image.size(), n = image[0].size();
+
+        queue<PII> q;
+        q.push({sr, sc});
+
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+
+            image[a][b] = color;
+            for (int i = 0; i < 4; i++)
+            {
+                int x = a + dx[i], y = b + dy[i];
+                if (x >= 0 && x < m && y >= 0 && y <= n && image[x][y] == prev)
+                {
+                    q.push({x, y});
+                }
+            }
+        }
+
+        return image;
     }
 };
