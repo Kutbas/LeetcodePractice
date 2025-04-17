@@ -362,4 +362,47 @@ public:
         }
         return q.empty() ? 0 : q.top();
     }
+
+    priority_queue<int> left;
+    priority_queue<int, vector<int>, greater<int>> right;
+
+    MedianFinder()
+    {
+    }
+
+    void addNum(int num)
+    {
+        if (left.size() == right.size())
+        {
+            if (left.empty() || num <= left.top())
+            {
+                left.push(num);
+            }
+            else
+            {
+                right.push(num);
+                left.push(right.top());
+                right.pop();
+            }
+        }
+        else
+        {
+            if (num <= left.top())
+            {
+                left.push(num);
+                right.push(left.top());
+                left.pop();
+            }
+            else
+                right.push(num);
+        }
+    }
+
+    double findMedian()
+    {
+        if (left.size() == right.size())
+            return (left.top() + right.top()) / 2.0;
+        else
+            return left.top();
+    }
 };
