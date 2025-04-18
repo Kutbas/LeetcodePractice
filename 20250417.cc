@@ -435,4 +435,151 @@ public:
 
         return image;
     }
+
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+    bool vis[301][301];
+    int m, n;
+
+    int numIslands(vector<vector<char>> &grid)
+    {
+        m = grid.size(), n = grid[0].size();
+        int ret = 0;
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (grid[i][j] == '1' && !vis[i][j])
+                {
+                    ret++;
+                    bfs(grid, i, j); // 将陆地进行标记
+                }
+            }
+        }
+        return ret;
+    }
+
+    void bfs(vector<vector<char>> &grid, int i, int j)
+    {
+        queue<pair<int, int>> q;
+        q.push({i, j});
+        vis[i][j] = true;
+
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+            for (int k = 0; k < 4; k++)
+            {
+                int x = a + dx[k], y = b + dy[k];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == '1' && !vis[x][y])
+                {
+                    q.push({x, y});
+                    vis[x][y] = true;
+                }
+            }
+        }
+    }
+
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+    bool vis[51][51];
+    int m, n;
+
+    int maxAreaOfIsland(vector<vector<int>> &grid)
+    {
+        m = grid.size(), n = grid[0].size();
+        int ret = 0;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                if (grid[i][j] == 1 && !vis[i][j])
+                    ret = max(ret, BFS(grid, i, j));
+            }
+        return ret;
+    }
+
+    int BFS(vector<vector<int>> &grid, int i, int j)
+    {
+        int count = 0;
+        queue<pair<int, int>> q;
+        q.push({i, j});
+        count++;
+        vis[i][j] = true;
+
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+            for (int k = 0; k < 4; k++)
+            {
+                int x = a + dx[k], y = b + dy[k];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == '1' && !vis[x][y])
+                {
+                    q.push({x, y});
+                    vis[x][y] = true;
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+    int m, n;
+
+    void solve(vector<vector<char>> &board)
+    {
+        m = board.size(), n = board[0].size();
+
+        // 先处理边界
+        for (int j = 0; j < n; j++)
+        {
+            if (board[0][j] == 'O')
+                bfs(board, 0, j);
+            if (board[m - 1][j] == 'O')
+                bfs(board, m - 1, j);
+        }
+
+        for (int i = 0; i < m; i++)
+        {
+            if (board[i][0] == 'O')
+                bfs(board, i, 0);
+            if (board[i][n - 1] == 'O')
+                bfs(board, i, n - 1);
+        }
+
+        // 还原
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                if (board[i][j] == 'O')
+                    board[i][j] = 'X';
+                else if (board[i][j] == '.')
+                    board[i][j] = 'O';
+            }
+    }
+
+    void bfs(vector<vector<char>> &board, int i, int j)
+    {
+        queue<pair<int, int>> q;
+        q.push({i, j});
+        board[i][j] = '.';
+
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+            for (int k = 0; k < 4; k++)
+            {
+                int x = a + dx[k], y = b + dy[k];
+                if (x >= 0 && x < m && y >= 0 && y < n && board[x][y] == 'O')
+                {
+                    q.push({x, y});
+                    board[x][y] = '.';
+                }
+            }
+        }
+    }
 };
