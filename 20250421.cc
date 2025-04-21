@@ -428,4 +428,121 @@ public:
             }
         }
     }
+
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+    vector<vector<int>> updateMatrix(vector<vector<int>> &mat)
+    {
+        int m = mat.size(), n = mat[0].size();
+        vector<vector<int>> dist(m, vector<int>(n, -1));
+        queue<pair<int, int>> q;
+
+        // 把所有源点加入到队列中
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (mat[i][j] == 0)
+                {
+                    q.push({i, j});
+                    dist[i][j] = 0;
+                }
+
+        // 一层一层往外扩
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+
+            for (int i = 0; i < 4; i++)
+            {
+                int x = a + dx[i], y = b + dy[i];
+                if (x >= 0 && x < m && y >= 0 && y < n && dist[x][y] == -1)
+                {
+                    dist[x][y] = dist[a][b] + 1;
+                    q.push({x, y});
+                }
+            }
+        }
+
+        return dist;
+    }
+
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+    int numEnclaves(vector<vector<int>> &grid)
+    {
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<bool>> vis(m, vector<bool>(n));
+        queue<pair<int, int>> q;
+
+        // 把边上的1加入到队列中
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (i == 0 || i == m - 1 || j == 0 || j == n - 1)
+                {
+                    if (grid[i][j] == 1)
+                    {
+                        q.push({i, j});
+                        vis[i][j] = true;
+                    }
+                }
+
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+
+            for (int i = 0; i < 4; i++)
+            {
+                int x = a + dx[i], y = b + dy[i];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1 && !vis[x][y])
+                {
+                    vis[x][y] = true;
+                    q.push({x, y});
+                }
+            }
+        }
+
+        int ret = 0;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (grid[i][j] == 1 && !vis[i][j])
+                    ret++;
+        return ret;
+    }
+
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+    vector<vector<int>> highestPeak(vector<vector<int>> &isWater)
+    {
+        int m = isWater.size(), n = isWater[0].size();
+        vector<vector<int>> dist(m, vector<int>(n, -1));
+        queue<pair<int, int>> q;
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                if (isWater[i][j])
+                {
+                    dist[i][j] = 0;
+                    q.push({i, j});
+                }
+            }
+
+        while (q.size())
+        {
+            auto [a, b] = q.front();
+            q.pop();
+
+            for (int i = 0; i < 4; i++)
+            {
+                int x = a + dx[i], y = b + dy[i];
+                if (x >= 0 && x < m && y >= 0 && y < n && dist[x][y] == -1)
+                {
+                    dist[x][y] = dist[a][b] + 1;
+                    q.push({x, y});
+                }
+            }
+        }
+        return dist;
+    }
 };
