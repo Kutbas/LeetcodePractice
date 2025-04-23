@@ -402,4 +402,110 @@ public:
 
         return ret;
     }
+
+    vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites)
+    {
+        // 准备工作
+        vector<vector<int>> edges(numCourses);
+        vector<int> in(numCourses); // 存储入度
+
+        for (auto &v : prerequisites)
+        {
+            int a = v[0], b = v[1];
+            edges[b].push_back(a);
+            in[a]++;
+        }
+
+        queue<int> q;
+        vector<int> ret;
+        for (int i = 0; i < numCourses; i++)
+        {
+            if (in[i] == 0)
+                q.push(i);
+        }
+
+        while (q.size())
+        {
+            int t = q.front();
+            q.pop();
+            ret.push_back(t);
+            for (int a : edges[t])
+            {
+                in[a--];
+                if (in[a] == 0)
+                    q.push(a);
+            }
+        }
+
+        if (ret.size() == numCourses)
+            return ret;
+        return {};
+    }
+
+    unordered_map<char, unordered_set<char>> edges; // 邻接表存储图
+    unordered_map<char, int> in;
+    bool check;
+
+    string alienOrder(vector<string> &words)
+    {
+        // 建图+初始化入度
+        for (auto &s : words)
+            for (auto ch : s)
+                in[ch] = 0;
+
+        int n = words.size();
+        for (int i = 0; i < n; i++)
+            for (int j = i + 1; j < n; j++)
+            {
+                add(words[i], words[j]);
+                if (check)
+                    return "";
+            }
+
+        queue<char> q;
+        for (auto &[a, b] : in)
+        {
+            if (b == 0)
+                q.push(a);
+        }
+
+        string ret;
+        while (q.size())
+        {
+            char t = q.front();
+            q.pop();
+            ret += t;
+            for (char ch : edges[t])
+            {
+                if (--in[ch] == 0)
+                    q.push(ch);
+            }
+        }
+
+        for (auto &[a, b] : in)
+            if (b != 0)
+                return "";
+
+        return ret;
+    }
+
+    void add(string &s1, string &s2)
+    {
+        int n = min(s1.size(), s2.size());
+        int i = 0;
+        while (i++ < n)
+        {
+            if (s1[i] != s2[i])
+            {
+                char a = s1[i], b = s2[i]; // a->b
+                if (!edges.count(a) || !edges[a].count(b))
+                {
+                    edges[a].insert(b);
+                }
+                break;
+            }
+        }
+        if (i == s2.size() && i < s1.size())
+            check = true;
+    }
 };
