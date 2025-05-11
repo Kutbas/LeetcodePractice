@@ -217,4 +217,71 @@ public:
 
         return ret;
     }
+
+    typedef pair<int, int> PIR;
+    int dx[4] = {0, 0, 1, -1};
+    int dy[4] = {1, -1, 0, 0};
+    int m, n;
+    int cutOffTree(vector<vector<int>> &f)
+    {
+        m = f.size(), n = f[0].size();
+
+        vector<PIR> trees;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (f[i][j] > 1)
+                    trees.push_back({i, j});
+
+        sort(trees.begin(), trees.end(), [&](const PIR &p1, const PIR &p2)
+             { return f[p1.first][p1.second] < f[p2.first][p2.second]; });
+
+        int bx = 0, by = 0;
+        int ret = 0;
+        for (auto [a, b] : trees)
+        {
+            int step = BFS(f, bx, by, a, b);
+            if (step == -1)
+                return -1;
+            ret += step;
+            bx = a, by = b;
+        }
+
+        return ret;
+    }
+
+    int BFS(vector<vector<int>> &f, int bx, int by, int ex, int ey)
+    {
+        if (bx == ex && by == ey)
+            return 0;
+
+        int ret = 0;
+        bool vis[51][51] = {0};
+        queue<PIR> q;
+        q.push({bx, by});
+        vis[bx][by] = true;
+
+        while (q.size())
+        {
+            ret++;
+            int sz = q.size();
+            while (sz--)
+            {
+                auto [a, b] = q.front();
+                q.pop();
+                for (int k = 0; k < 4; k++)
+                {
+                    int x = a + dx[k], y = b + dy[k];
+                    if (x >= 0 && x < m && y >= 0 && y < n && !vis[x][y] && f[x][y] >= 1)
+                    {
+                        if (x == ex && y == ey)
+                            return ret;
+                        q.push({x, y});
+                        vis[x][y] = true;
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
 };
