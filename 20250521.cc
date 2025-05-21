@@ -248,4 +248,45 @@ public:
             index[j] = tmpIndex[j - left];
         }
     }
+
+    int dx[4] = {0, 0, 1, -1};
+    int dy[4] = {1, -1, 0, 0};
+    int m, n;
+    int maxDistance(vector<vector<int>> &grid)
+    {
+        m = grid.size(), n = grid[0].size();
+        vector<vector<int>> dist(m, vector<int>(n, -1));
+
+        queue<pair<int, int>> q;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (grid[i][j] == 1)
+                {
+                    dist[i][j] = 0;
+                    q.push({i, j});
+                }
+
+        int ret = -1;
+        while (q.size())
+        {
+            int sz = q.size();
+            while (sz--)
+            {
+                auto [a, b] = q.front();
+                q.pop();
+                for (int k = 0; k < 4; k++)
+                {
+                    int x = a + dx[k], y = b + dy[k];
+                    if (x >= 0 && x < m && y >= 0 && y < n && dist[x][y] == -1)
+                    {
+                        dist[x][y] = dist[a][b] + 1;
+                        q.push({x, y});
+                        ret = max(ret, dist[x][y]);
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
 };
