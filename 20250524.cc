@@ -241,4 +241,42 @@ public:
 
         return ret.size() == numCourses ? ret : vector<int>{};
     }
+
+    int m, n;
+    int dx[4] = {0, 0, 1, -1};
+    int dy[4] = {1, -1, 0, 0};
+    vector<vector<int>> highestPeak(vector<vector<int>> &isWater)
+    {
+        m = isWater.size(), n = isWater[0].size();
+        vector<vector<int>> high(m, vector<int>(n, -1));
+        queue<pair<int, int>> q;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (isWater[i][j])
+                {
+                    high[i][j] = 0;
+                    q.push({i, j});
+                }
+
+        while (q.size())
+        {
+            int sz = q.size();
+            while (sz--)
+            {
+                auto [a, b] = q.front();
+                q.pop();
+                for (int k = 0; k < 4; k++)
+                {
+                    int x = a + dx[k], y = b + dy[k];
+                    if (x >= 0 && x < m && y >= 0 && y < n && high[x][y] == -1)
+                    {
+                        high[x][y] = high[a][b] + 1;
+                        q.push({x, y});
+                    }
+                }
+            }
+        }
+
+        return high;
+    }
 };
