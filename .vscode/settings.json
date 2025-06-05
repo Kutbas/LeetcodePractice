@@ -90,6 +90,11 @@
         "xloctime": "cpp",
         "xmemory": "cpp",
         "xtr1common": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "codecvt": "cpp",
+        "cuchar": "cpp",
+        "memory_resource": "cpp",
+        "string_view": "cpp",
+        "shared_mutex": "cpp"
     }
 }
