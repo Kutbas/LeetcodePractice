@@ -204,4 +204,46 @@ public:
         if (i == s2.size() && i < s1.size())
             check = true;
     }
+
+    void hanota(vector<int> &a, vector<int> &b, vector<int> &c)
+    {
+        dfs(a, b, c, a.size());
+    }
+
+    void dfs(vector<int> &a, vector<int> &b, vector<int> &c, int n)
+    {
+        if (n == 1)
+        {
+            c.push_back(a.back());
+            a.pop_back();
+            return;
+        }
+
+        dfs(a, c, b, n - 1);
+
+        c.push_back(a.back());
+        a.pop_back();
+
+        dfs(b, a, c, n - 1);
+    }
+
+    ListNode *mergeTwoLists(ListNode *l1, ListNode *l2)
+    {
+        if (l1 == nullptr)
+            return l2;
+        if (l2 == nullptr)
+            return l1;
+
+        if (l1->val <= l2->val)
+        {
+            l1->next = mergeTwoLists(l1->next, l2);
+            return l1;
+        }
+        else
+        {
+            l2->next = mergeTwoLists(l2->next, l1);
+            return l2;
+        }
+        
+    }
 };
