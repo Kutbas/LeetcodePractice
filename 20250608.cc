@@ -197,4 +197,29 @@ public:
             return l2;
         }
     }
+
+    ListNode *reverseList(ListNode *head)
+    {
+        if (head == nullptr || head->next == nullptr)
+            return head;
+
+        ListNode *newhead = reverseList(head->next);
+        head->next->next = head;
+        head->next = nullptr;
+
+        return newhead;
+    }
+
+    ListNode *swapPairs(ListNode *head)
+    {
+        if (head == nullptr || head->next == nullptr)
+            return head;
+
+        ListNode *tmp = swapPairs(head->next->next);
+        ListNode *ret = head->next;
+        head->next->next = head;
+        head->next = tmp;
+
+        return ret;
+    }
 };
