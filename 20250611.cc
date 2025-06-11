@@ -176,4 +176,14 @@ public:
 
         return image;
     }
+
+    bool evaluateTree(TreeNode *root)
+    {
+        if (root->left == nullptr)
+            return root->val == 0 ? false : true;
+
+        bool left = evaluateTree(root->left);
+        bool right = evaluateTree(root->right);
+        return root->val == 2 ? left | right : left & right;
+    }
 };
