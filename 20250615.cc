@@ -277,4 +277,61 @@ public:
             return nullptr;
         return root;
     }
+
+    vector<string> ret1;
+    vector<string> binaryTreePaths(TreeNode *root)
+    {
+        string path;
+        if (root == nullptr)
+            return ret1;
+        dfs(root, path);
+        return ret1;
+    }
+
+    void dfs(TreeNode *root, string path)
+    {
+        path += to_string(root->val);
+
+        if (root->left == nullptr && root->right == nullptr)
+        {
+            ret1.push_back(path);
+            return;
+        }
+
+        path += "->";
+        if (root->left)
+            dfs(root->left, path);
+        if (root->right)
+            dfs(root->right, path);
+    }
+
+    vector<vector<int>> res;
+    vector<int> path;
+    bool Check[7];
+    vector<vector<int>> permute(vector<int> &nums)
+    {
+        dfs(nums);
+        return res;
+    }
+
+    void dfs(vector<int> &nums)
+    {
+        if (nums.size() == path.size())
+        {
+            res.push_back(path);
+            return;
+        }
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (Check[i] == false)
+            {
+                path.push_back(nums[i]);
+                Check[i] = true;
+                dfs(nums);
+                path.pop_back();
+                Check[i] = false;
+            }
+        }
+    }
 };
