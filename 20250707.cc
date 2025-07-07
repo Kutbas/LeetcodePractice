@@ -191,6 +191,24 @@ public:
 
         return nums[left] < target ? left + 1 : left;
     }
+
+    string largestNumber(vector<int> &nums)
+    {
+        // 把所有的数转化为字符串
+        vector<string> strs;
+        for (int x : nums)
+            strs.push_back(to_string(x));
+
+        // 排序
+        sort(strs.begin(), strs.end(), [](const string &s1, const string &s2)
+             { return s1 + s2 > s2 + s1; });
+
+        string ret;
+        for (auto &s : strs)
+            ret += s;
+
+        return ret[0] == '0' ? "0" : ret;
+    }
 };
 
 class LRUCache
