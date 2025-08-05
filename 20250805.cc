@@ -227,4 +227,41 @@ public:
         if (root->right)
             dfs4(root->right, path);
     }
+
+    int largestSumAfterKNegations(vector<int> &nums, int k)
+    {
+        int m = 0, minElem = INT_MAX, n = nums.size();
+        for (auto n : nums)
+        {
+            if (n < 0)
+                m++;
+            minElem = min(minElem, abs(n));
+        }
+
+        int ret = 0;
+        if (m > k)
+        {
+            sort(nums.begin(), nums.end());
+            for (int i = 0; i < k; i++)
+            {
+                ret += -nums[i];
+            }
+
+            for (int i = k; i < n; i++)
+                ret += nums[i];
+        }
+        else
+        {
+            // 把所有的负数变为正数
+            for (auto n : nums)
+                ret += abs(n);
+
+            if ((k - m) % 2)
+            {
+                ret -= minElem * 2;
+            }
+        }
+
+        return ret;
+    }
 };
