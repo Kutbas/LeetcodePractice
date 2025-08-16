@@ -208,4 +208,25 @@ public:
 
         return fib(n - 2) + fib(n - 1);
     }
+
+    int canCompleteCircuit(vector<int> &gas, vector<int> &cost)
+    {
+        int n = gas.size();
+        for (int i = 0; i < n; i++)
+        {
+            int rest = 0, step = 0;
+            for (; step < n; step++)
+            {
+                int index = (i + step) % n;
+                rest = rest + gas[index] - cost[index];
+                if (rest < 0)
+                    break;
+            }
+            if (rest >= 0)
+                return i;
+            i = i + step;
+        }
+
+        return -1;
+    }
 };
