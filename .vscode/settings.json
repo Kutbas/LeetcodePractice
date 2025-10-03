@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "20251003": "cpp",
         "vector": "cpp",
         "xutility": "cpp",
         "xstring": "cpp",
