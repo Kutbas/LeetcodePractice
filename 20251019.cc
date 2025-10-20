@@ -24,6 +24,26 @@ struct TreeNode
 class Solution
 {
 public:
+    int lastStoneWeightII(vector<int> &stones)
+    {
+        int sum = 0;
+        for (auto x : stones)
+            sum += x;
+
+        int n = stones.size(), m = sum / 2;
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1));
+
+        for (int i = 1; i <= n; i++)
+            for (int j = 0; j <= m; j++)
+            {
+                dp[i][j] = dp[i - 1][j];
+                if (j >= stones[i - 1])
+                    dp[i][j] = max(dp[i][j], dp[i - 1][j - stones[i - 1]] + stones[i - 1]);
+            }
+
+        return sum - 2 * dp[n][m];
+    }
+
     // 1
     int findPeakElement(vector<int> &nums)
     {
@@ -175,13 +195,13 @@ public:
         int ret = 0;
         double aim = sum / 2;
 
-        while(sum>aim)
+        while (sum > aim)
         {
-            auto t=q.top();
+            auto t = q.top();
             q.pop();
 
-            sum-=t/2;
-            q.push(t/2);
+            sum -= t / 2;
+            q.push(t / 2);
             ret++;
         }
 
