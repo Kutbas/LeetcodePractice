@@ -119,4 +119,59 @@ public:
 
         return dp[m][n];
     }
+
+    // 5
+    int ret = 0;
+    int sumNumbers(TreeNode *root)
+    {
+        dfs(root, 0);
+        return ret;
+    }
+
+    void dfs(TreeNode *root, int path)
+    {
+        path = path * 10 + root->val;
+
+        if (root->left == nullptr && root->right == nullptr)
+        {
+            ret += path;
+            return;
+        }
+
+        if (root->left)
+            dfs(root->left, path);
+        if (root->right)
+            dfs(root->right, path);
+    }
+
+    // 6
+    void moveZeroes(vector<int> &nums)
+    {
+        int n = nums.size();
+        for (int dest = -1, cur = 0; cur < n; cur++)
+            if (nums[cur])
+                swap(nums[++dest], nums[cur]);
+    }
+
+    // 7
+    int jump(vector<int> &nums)
+    {
+        int n = nums.size(), cur = 0, far = 0, ret = 0;
+
+        for (int i = 0; i < n - 1; i++)
+        {
+            far = max(far, i + nums[i]);
+
+            if (i == cur)
+            {
+                cur = far;
+                ret++;
+
+                if (cur >= n - 1)
+                    break;
+            }
+        }
+
+        return ret;
+    }
 };
