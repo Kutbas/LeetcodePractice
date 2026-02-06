@@ -25,165 +25,119 @@ class Solution
 {
 public:
     // 1
-    double myPow(double x, int n)
+    int minPathSum(vector<vector<int>> &grid)
     {
-        long long N = n;
-        if (N < 0)
-        {
-            N = -N;
-            x = 1 / x;
-        }
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, INT_MAX));
+        dp[0][1] = dp[1][0] = 0;
 
-        return pow(x, N);
-    }
+        for (int i = 1; i <= m; i++)
+            for (int j = 1; j <= n; j++)
+            {
+                int prev = min(dp[i - 1][j], dp[i][j - 1]);
+                dp[i][j] = prev + grid[i - 1][j - 1];
+            }
 
-    double pw(double x, long long n)
-    {
-        if (n == 0)
-            return 1;
-
-        double tmp = pow(x, n / 2);
-
-        return n % 2 == 0 ? tmp * tmp : tmp * tmp * x;
+        return dp[m][n];
     }
 
     // 2
-    int subarraysDivByK(vector<int> &nums, int k)
+    int findLength(vector<int> &nums1, vector<int> &nums2)
     {
-        unordered_map<int, int> hash;
-        hash[0] = 1;
+        int m = nums1.size(), n = nums2.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));
 
-        int sum = 0, ret = 0;
-        for (auto n : nums)
-        {
-            sum += n;
-            int r = (sum % k + k) % k;
-            if (hash.count(r))
-                ret += hash[r];
-            hash[r]++;
-        }
+        int ret = 0;
+        for (int i = 1; i <= m; i++)
+            for (int j = 1; j <= n; j++)
+                if (nums1[i - 1] == nums2[j - 1])
+                {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                    ret = max(ret, dp[i][j]);
+                }
 
         return ret;
     }
 
     // 3
-    vector<vector<int>> ret;
-    vector<int> path;
-    bool vis[9] = {0};
-    vector<vector<int>> permuteUnique(vector<int> &nums)
+    int maxProfit(vector<int> &prices)
     {
-        sort(nums.begin(), nums.end());
-        dfs(nums);
-        return ret;
-    }
+        int n = prices.size();
+        vector<vector<int>> dp(n, vector<int>(3));
+        // 0：持股 1：不持股，待买入 2：不持股，冷静期
+        dp[0][0] = -prices[0];
 
-    void dfs(vector<int> &nums)
-    {
-        if (path.size() == nums.size())
+        for (int i = 1; i < n; i++)
         {
-            ret.push_back(path);
-            return;
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][2]);
+            dp[i][2] = dp[i - 1][0] + prices[i];
         }
 
-        for (int i = 0; i < nums.size(); i++)
-        {
-            if (vis[i] || (i != 0 && nums[i - 1] == nums[i] && !vis[i - 1]))
-                continue;
-
-            vis[i] = true;
-            path.push_back(nums[i]);
-            dfs(nums);
-            path.pop_back();
-            vis[i] = false;
-        }
+        return max(dp[n - 1][1], dp[n - 1][2]);
     }
 
     // 4
-    int halveArray(vector<int> &nums)
+    bool validateStackSequences(vector<int> &pushed, vector<int> &popped)
     {
-        priority_queue<double> q;
-        double sum = 0;
+        int n = pushed.size(), i = 0;
+        stack<int> st;
 
-        for (auto n : nums)
+        for (auto n : pushed)
         {
-            sum += n;
-            q.push(n);
+            st.push(n);
+            while (st.size() && st.top() == popped[i])
+            {
+                st.pop();
+                i++;
+            }
         }
 
-        int ret = 0;
-        double aim = sum / 2.0;
-        while (sum > aim)
-        {
-            auto t = q.top() / 2.0;
-            q.pop();
-            sum -= t;
-            q.push(t);
-            ret++;
-        }
-
-        return ret;
+        return i == n;
     }
 
     // 5
-    int memo[201][201];
-    int getMoneyAmount(int n)
+    int profitableSchemes(int n, int m, vector<int> &group, vector<int> &profit)
     {
-        return dfs(1, n);
-    }
+        const int MOD = 1e9 + 7;
+        int len = group.size();
+        vector<vector<vector<int>>> dp(len + 1, vector<vector<int>>(n + 1, vector<int>(m + 1)));
 
-    int dfs(int left, int right)
-    {
-        if (left >= right)
-            return 0;
+        for (int i = 0; i <= n; i++)
+            dp[0][i][0] = 1;
+        for (int i = 1; i <= len; i++)
+            for (int j = 0; j <= n; j++)
+                for (int k = 0; k <= m; k++)
+                {
+                    dp[i][j][k] = dp[i - 1][j][k];
 
-        if (memo[left][right])
-            return memo[left][right];
+                    if (j >= group[i - 1])
+                    {
+                        int remain = max(0, k - profit[i - 1]);
+                        dp[i][j][k] += dp[i - 1][j - group[i - 1]][remain];
+                    }
 
-        int ret = INT_MAX;
-        for (int head = left; head <= right; head++)
-        {
-            int x = dfs(left, head - 1);
-            int y = dfs(head + 1, right);
+                    dp[i][j][k] %= MOD;
+                }
 
-            ret = min(ret, head + max(x, y));
-        }
-
-        memo[left][right] = ret;
-        return ret;
+        return dp[len][n][m];
     }
 
     // 6
-    long prev = LONG_MIN;
-    bool isValidBST(TreeNode *root)
+    string largestNumber(vector<int> &nums)
     {
-        if (root == nullptr)
-            return true;
+        vector<string> strs;
+        for (auto n : nums)
+            strs.push_back(to_string(n));
 
-        bool left = isValidBST(root->left);
-        if (!left)
-            return false;
+        sort(strs.begin(), strs.end(),
+             [&](string &s1, string &s2)
+             { return s1 + s2 > s2 + s1; });
 
-        bool cur = false;
-        if (prev < root->val)
-            cur = true;
-        if (!cur)
-            return false;
+        string ret;
+        for (auto &s : strs)
+            ret += s;
 
-        prev = root->val;
-        bool right = isValidBST(root->right);
-        return right;
-    }
-
-    // 7
-    ListNode *reverseList(ListNode *head)
-    {
-        if (head == nullptr || head->next == nullptr)
-            return head;
-
-        ListNode *tmp = reverseList(head->next);
-        head->next->next = head;
-        head->next = nullptr;
-
-        return tmp;
+        return ret[0] == '0' ? "0" : ret;
     }
 };
