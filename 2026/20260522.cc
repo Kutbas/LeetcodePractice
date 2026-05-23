@@ -126,4 +126,35 @@ public:
 
         return dp[m][n];
     }
+
+    // 5
+    int findLongestChain(vector<vector<int>> &pairs)
+    {
+        // 1. 按区间起点排序（默认先按第一个元素，再按第二个）
+        sort(pairs.begin(), pairs.end());
+        int n = pairs.size();
+
+        // 2. dp[i] 表示以第 i 个区间结尾的最长链长度
+        vector<int> dp(n, 1); // 初始化为 1，每个区间自身就是长度为 1 的链
+        int ret = 1;          // 记录全局最大长度
+
+        // 3. 遍历每个区间，尝试接在前面可行的区间后面
+        for (int i = 1; i < n; i++)
+        {
+            // 检查所有在 i 前面的区间 j
+            for (int j = 0; j < i; j++)
+            {
+                // 如果区间 j 的右端点 严格小于 区间 i 的左端点
+                // 说明它们可以连接成链
+                if (pairs[j][1] < pairs[i][0])
+                    // 更新 dp[i]：要么保持原值，要么从 j 接过来
+                    dp[i] = max(dp[j] + 1, dp[i]);
+            }
+            // 用当前 dp[i] 更新全局最优解
+            ret = max(ret, dp[i]);
+        }
+
+        // 4. 返回最长链的长度
+        return ret;
+    }
 };
