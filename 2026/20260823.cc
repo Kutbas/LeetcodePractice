@@ -34,195 +34,99 @@ class Solution
 {
 public:
     // 1
-    bool validateStackSequences(vector<int> &pushed, vector<int> &popped)
+    vector<int> findAnagrams(string s, string p)
     {
-        stack<int> nums;
-        int n = pushed.size(), i = 0;
+        int m = s.size(), n = p.size();
+        int hash1[128] = {0};
+        int hash2[128] = {0};
 
-        for (auto num : pushed)
+        for (char ch : p)
+            hash1[ch]++;
+
+        vector<int> ret;
+        for (int left = 0, right = 0, count = 0; right < m; right++)
         {
-            nums.push(num);
-            while (nums.size() && nums.top() == popped[i])
+            char in = s[right];
+            if (++hash2[in] <= hash1[in])
+                count++;
+            while (right - left + 1 > n)
             {
-                nums.pop();
-                i++;
+                char out = s[left++];
+                if (hash2[out]-- <= hash1[out])
+                    count--;
             }
-        }
-
-        return i == n;
-    }
-
-    // 2
-    bool lemonadeChange(vector<int> &bills)
-    {
-        int hash[128] = {0};
-
-        for (auto n : bills)
-        {
-            if (n == 5)
-                hash[5]++;
-            else if (n == 10)
-            {
-                if (!hash[5])
-                    return false;
-                hash[5]--, hash[10]++;
-            }
-            else
-            {
-                if (hash[5] && hash[10])
-                    hash[5]--, hash[10]--;
-                else if (hash[5] >= 3)
-                    hash[5] -= 3;
-                else
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    // 3
-    int massage(vector<int> &nums)
-    {
-        int n = nums.size();
-        if (n == 0)
-            return 0;
-
-        vector<int> f(n), g(n);
-        f[0] = nums[0];
-
-        for (int i = 1; i < n; i++)
-        {
-            f[i] = g[i - 1] + nums[i];
-            g[i] = max(f[i - 1], g[i - 1]);
-        }
-
-        return max(f[n - 1], g[n - 1]);
-    }
-
-    // 4
-    int maxTurbulenceSize(vector<int> &arr)
-    {
-        int n = arr.size();
-        vector<int> f(n + 1, 1), g(n + 1, 1);
-        int ret = 1;
-
-        for (int i = 1; i < n; i++)
-        {
-            if (arr[i - 1] > arr[i])
-                f[i] = g[i - 1] + 1;
-            else if (arr[i - 1] < arr[i])
-                g[i] = f[i - 1] + 1;
-            ret = max(ret, max(f[i], g[i]));
+            if (count == n)
+                ret.push_back(left);
         }
 
         return ret;
     }
 
-    // 5
-    class MyQueue
+    // 2
+    ListNode *reverseList(ListNode *head)
     {
-    private:
-        stack<int> in, out;
+        if (head == nullptr || head->next == nullptr)
+            return head;
 
-        void in2out()
+        ListNode *newhead = reverseList(head->next);
+        head->next->next = head;
+        head->next = nullptr;
+
+        return newhead;
+    }
+
+    // 3
+    int findContentChildren(vector<int> &g, vector<int> &s)
+    {
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+
+        int m = g.size(), n = s.size(), ret = 0;
+        for (int i = 0, j = 0; i < m && j < n; i++, j++)
         {
-            while (in.size())
+            while (j < n && s[j] < g[i])
+                j++;
+            if (j < n)
+                ret++;
+        }
+
+        return ret;
+    }
+
+    // 4
+    int minFallingPathSum(vector<vector<int>> &matrix)
+    {
+        int m = matrix.size(), n = matrix[0].size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 2, INT_MAX));
+        for (int i = 0; i < n + 2; i++)
+            dp[0][i] = 0;
+
+        for (int i = 1; i <= m; i++)
+            for (int j = 1; j <= n; j++)
             {
-                out.push(in.top());
-                in.pop();
+                dp[i][j] = min(dp[i - 1][j], min(dp[i - 1][j - 1], dp[i - 1][j + 1])) + matrix[i - 1][j - 1];
             }
-        }
 
-    public:
-        MyQueue()
-        {
-        }
+        int ret = INT_MAX;
+        for (int i = 1; i <= n; i++)
+            ret = min(ret, dp[m][i]);
 
-        void push(int x)
-        {
-            in.push(x);
-        }
-
-        int pop()
-        {
-            if (out.empty())
-                in2out();
-
-            int r = out.top();
-            out.pop();
-            return r;
-        }
-
-        int peek()
-        {
-            if (out.empty())
-                in2out();
-
-            int r = out.top();
-            return r;
-        }
-
-        bool empty()
-        {
-            return in.empty() && out.empty();
-        }
-    };
-};
-
-// 6
-struct RowDotFunctor
-{
-    const float *_matrix;
-    const float *_vec;
-    int _cols;
-
-    RowDotFunctor(const float *matrix, const float *vec, int cols) : _matrix(matrix), _vec(vec), _cols(cols)
-    {
+        return ret;
     }
 
-    __host__ __device__ float operator()(int row) const
+    // 5
+    int minCost(vector<vector<int>> &costs)
     {
-        float sum = 0.0f;
-        const float *ptr = _matrix + row * _cols;
+        int n = costs.size();
+        vector<vector<int>> dp(n + 1, vector<int>(3));
 
-        for (int col = 0; col < _cols; col++)
-            sum += ptr[col] * _vec[col];
+        for (int i = 1; i <= n; i++)
+        {
+            dp[i][0] = min(dp[i - 1][1], dp[i - 1][2]) + costs[i - 1][0];
+            dp[i][1] = min(dp[i - 1][0], dp[i - 1][2]) + costs[i - 1][1];
+            dp[i][2] = min(dp[i - 1][1], dp[i - 1][0]) + costs[i - 1][2];
+        }
 
-        return sum;
+        return min(dp[n][0], min(dp[n][1], dp[n][2]));
     }
 };
-
-std::vector<float> matrix_dot_vector(const std::vector<std::vector<float>> &matrix, const std::vector<float> &vec)
-{
-    int rows = matrix.size();
-    if (rows == 0)
-        return {-1};
-    int cols = matrix[0].size();
-    if (cols != vec.size())
-        return {-1};
-
-    vector<float> flat_matrix(rows * cols);
-    for (int i = 0; i < rows; i++)
-    {
-        if (matrix[i].size() != cols)
-            return {-1};
-
-        copy(matrix[i].begin(), matrix[i].end(), flat_matrix.begin() + i * cols);
-    }
-
-    thrust::device_vector<float> d_matrix(flat_matrix.begin(), flat_matrix.end());
-    thrust::device_vector<float> d_vec(vec.begin(), vec.end());
-    thrust::device_vector<float> d_result(rows);
-
-    const float *matrix_ptr = thrust::raw_pointer_cast(d_matrix.data());
-    const float *vec_ptr = thrust::raw_pointer_cast(d_vec.data());
-
-    thrust::transform(thrust::counting_iterator<int>(0), thrust::counting_iterator<int>(rows), d_result.begin(), RowDotFunctor(matrix_ptr, vec_ptr, cols));
-
-    vector<float> result(rows);
-
-    thrust::copy(d_result.begin(), d_result.end(), result.begin());
-
-    return result;
-}
