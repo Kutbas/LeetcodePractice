@@ -186,4 +186,26 @@ public:
 
         return sum;
     }
+
+    // 6
+    vector<int> ret;
+    vector<int> inorderTraversal(TreeNode *root)
+    {
+        if (root == nullptr)
+            return ret;
+
+        Inorder(root);
+
+        return ret;
+    }
+
+    void Inorder(TreeNode *&root)
+    {
+        if (root == nullptr)
+            return;
+
+        Inorder(root->left);
+        ret.push_back(root->val);
+        Inorder(root->right);
+    }
 };
