@@ -146,4 +146,43 @@ public:
 
         return dist;
     }
+
+    // 4
+    struct cmp
+    {
+        bool operator()(const ListNode *l1, const ListNode *l2)
+        {
+            return l1->val > l2->val ? true : false;
+        }
+    };
+
+    ListNode *mergeKLists(vector<ListNode *> &lists)
+    {
+        if (lists.size() == 0)
+            return nullptr;
+
+        priority_queue<ListNode *, vector<ListNode *>, cmp> q;
+        for (auto list : lists)
+            if (list)
+                q.push(list);
+
+        ListNode *ret = new ListNode(0);
+        ListNode *prev = ret;
+
+        while (q.size())
+        {
+            auto t = q.top();
+            q.pop();
+
+            prev->next = t;
+            prev = prev->next;
+
+            if (t->next)
+                q.push(t->next);
+        }
+
+        prev = ret->next;
+        delete ret;
+        return prev;
+    }
 };
