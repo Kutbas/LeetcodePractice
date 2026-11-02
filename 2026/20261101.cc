@@ -221,7 +221,7 @@ public:
             auto [u, d] = q.top();
             q.pop();
 
-            if (dist[u] > d)
+            if (d > dist[u])
                 continue;
 
             for (auto &[v, w] : graph[u])
